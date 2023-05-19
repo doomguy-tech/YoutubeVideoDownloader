@@ -35,6 +35,9 @@
             this.buttonClear = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonDownloadVideo = new System.Windows.Forms.Button();
+            this.buttonChangeFolder = new System.Windows.Forms.Button();
+            this.labelOutputFolder = new System.Windows.Forms.Label();
+            this.buttonOpenFolder = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonDownload
@@ -94,11 +97,43 @@
             this.buttonDownloadVideo.UseVisualStyleBackColor = true;
             this.buttonDownloadVideo.Click += new System.EventHandler(this.buttonDownloadVideo_Click);
             // 
+            // buttonChangeFolder
+            // 
+            this.buttonChangeFolder.Location = new System.Drawing.Point(40, 127);
+            this.buttonChangeFolder.Name = "buttonChangeFolder";
+            this.buttonChangeFolder.Size = new System.Drawing.Size(83, 23);
+            this.buttonChangeFolder.TabIndex = 6;
+            this.buttonChangeFolder.Text = "Change folder";
+            this.buttonChangeFolder.UseVisualStyleBackColor = true;
+            this.buttonChangeFolder.Click += new System.EventHandler(this.buttonChangeFolder_Click);
+            // 
+            // labelOutputFolder
+            // 
+            this.labelOutputFolder.AutoSize = true;
+            this.labelOutputFolder.Location = new System.Drawing.Point(208, 132);
+            this.labelOutputFolder.Name = "labelOutputFolder";
+            this.labelOutputFolder.Size = new System.Drawing.Size(63, 13);
+            this.labelOutputFolder.TabIndex = 7;
+            this.labelOutputFolder.Text = "outputfolder";
+            // 
+            // buttonOpenFolder
+            // 
+            this.buttonOpenFolder.Location = new System.Drawing.Point(127, 127);
+            this.buttonOpenFolder.Name = "buttonOpenFolder";
+            this.buttonOpenFolder.Size = new System.Drawing.Size(75, 23);
+            this.buttonOpenFolder.TabIndex = 8;
+            this.buttonOpenFolder.Text = "Open";
+            this.buttonOpenFolder.UseVisualStyleBackColor = true;
+            this.buttonOpenFolder.Click += new System.EventHandler(this.buttonOpenFolder_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.buttonOpenFolder);
+            this.Controls.Add(this.labelOutputFolder);
+            this.Controls.Add(this.buttonChangeFolder);
             this.Controls.Add(this.buttonDownloadVideo);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonClear);
@@ -108,7 +143,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Youtube Music Downloader";
+            this.Text = "Youtube Downloader";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -123,6 +158,9 @@
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonDownloadVideo;
+        private System.Windows.Forms.Button buttonChangeFolder;
+        private System.Windows.Forms.Label labelOutputFolder;
+        private System.Windows.Forms.Button buttonOpenFolder;
     }
 }
 
