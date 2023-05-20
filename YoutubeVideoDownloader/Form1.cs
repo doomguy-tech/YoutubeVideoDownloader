@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Configuration;
 using YoutubeExplode.Playlists;
+using System.IO.Pipes;
 
 namespace YoutubeVideoDownloader
 {
@@ -74,8 +75,6 @@ namespace YoutubeVideoDownloader
                 return;
             }
 
-
-           
             DisableAllButtons();
             label2.Text = string.Empty;
             string url = textBox1.Text;
@@ -87,7 +86,7 @@ namespace YoutubeVideoDownloader
                 //var playlist = await youtube.Playlists.GetAsync("https://www.youtube.com/watch?v=4X2jQXcF0S8&list=PLfou2nEbJ6Qs738XcjmsIdLtB-5SRsj8V&pp=iAQB");
                 var videos = await youtube.Playlists.GetVideosAsync(playlist.Id);
                 string savedPath = labelOutputFolder.Text;
-                var currentPath = Path.Combine(savedPath, playlist.Title);
+                var currentPath = Path.Combine(savedPath, RemoveIllegalFileNameCharacters(playlist.Title));
                 if (!Directory.Exists(currentPath))
                 {
                     Directory.CreateDirectory(currentPath);
@@ -119,15 +118,12 @@ namespace YoutubeVideoDownloader
                                 writer.WriteLine(cleanedName);
                                 writer.WriteLine(ex.ToString());
                             }
-
                         }
                 }
                 label2.Text = playlist.Title+" Has been saved successfully";
             }
             else
             {
-                
-
                 label2.Text = "Downloading single file...";
                 var video = await youtube.Videos.GetAsync(url);
                 //var video = await youtube.Videos.GetAsync("https://www.youtube.com/watch?v=tVUYyVfydqY");
@@ -191,7 +187,7 @@ namespace YoutubeVideoDownloader
                 //var playlist = await youtube.Playlists.GetAsync("https://www.youtube.com/watch?v=4X2jQXcF0S8&list=PLfou2nEbJ6Qs738XcjmsIdLtB-5SRsj8V&pp=iAQB");
                 var videos = await youtube.Playlists.GetVideosAsync(playlist.Id);
                 string savedPath=labelOutputFolder.Text;
-                var currentPath = Path.Combine(savedPath, playlist.Title);
+                var currentPath =Path.Combine(savedPath, RemoveIllegalFileNameCharacters(playlist.Title));
                 if (!Directory.Exists(currentPath))
                 {
                     Directory.CreateDirectory(currentPath);
@@ -202,9 +198,10 @@ namespace YoutubeVideoDownloader
                 {
                     count++;
                     var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
-                    var streamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestBitrate();
+                    var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestBitrate();
                     var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
                     string cleanedName = RemoveIllegalFileNameCharacters(video.Title);
+
                     label2.Text = $"Downloading {video.Title}, {count} of {videos.Count}";
                     if (File.Exists(Path.Combine(currentPath, cleanedName + ".mp4")) && new FileInfo(Path.Combine(currentPath, cleanedName + ".mp4")).Length > 0)
                     {
@@ -232,19 +229,21 @@ namespace YoutubeVideoDownloader
             {
                 label2.Text = "Downloading single file...";
                 var video = await youtube.Videos.GetAsync(url);
-                //var video = await youtube.Videos.GetAsync("https://www.youtube.com/watch?v=tVUYyVfydqY");
-                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
-                var streamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestBitrate();
+                //var video = await youtube.Videos.GetAsync("https://www.youtube.com/watch?v=tVUYyVfydqY");               
                 string savedPath = labelOutputFolder.Text;
                 var fileName = RemoveIllegalFileNameCharacters($"{video.Title}.mp4");
                 var filePath = Path.Combine(savedPath, fileName);
+                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
+                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestBitrate();
+                var videoStream = await youtube.Videos.Streams.GetAsync(streamInfo);
+
                 if (File.Exists(filePath) && new FileInfo(filePath).Length > 0)
                 {
                     label2.Text = fileName + " already exists";
                 }
                 else
                 {
-                    await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+                    await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath); 
                     label2.Text = fileName + " has been saved successfully";
                 }
             }
