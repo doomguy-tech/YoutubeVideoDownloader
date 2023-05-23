@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Configuration;
 using YoutubeExplode.Playlists;
 using System.IO.Pipes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace YoutubeVideoDownloader
 {
@@ -49,6 +50,7 @@ namespace YoutubeVideoDownloader
             buttonDownloadVideo.Enabled = false;
             buttonChangeFolder.Enabled = false; 
             buttonClear.Enabled = false;
+            progressBar1.Visible = true;
         }
         public void EnableAllButtons()
         {
@@ -56,6 +58,7 @@ namespace YoutubeVideoDownloader
             buttonDownloadVideo.Enabled = true;
             buttonChangeFolder.Enabled = true;
             buttonClear.Enabled = true;
+            progressBar1.Visible = false;
         }
 
         public string RemoveIllegalFileNameCharacters(string fileName)
@@ -138,6 +141,15 @@ namespace YoutubeVideoDownloader
                 }
                 else
                 {
+                    var progress = new Progress<double>(p =>
+                    {
+                        progressBar1.Value = Convert.ToInt32(p * 100);
+                        label2.Text = "Downloading single file..." + Convert.ToString(Math.Round(p, 2) * 100) + "%";
+                        if (p == 1)
+                        {
+                            label2.Text = fileName + " has been saved successfully";
+                        }
+                    });
                     await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
                     label2.Text = fileName + " has been saved successfully";
                 }
@@ -149,6 +161,8 @@ namespace YoutubeVideoDownloader
         {
             textBox1.Text= string.Empty;
             label2.Text= string.Empty;  
+            progressBar1.Value= 0;
+            progressBar1.Visible= false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -159,6 +173,7 @@ namespace YoutubeVideoDownloader
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var appSettings = config.AppSettings.Settings;
             string path = appSettings["OutputPath"].Value;
+            progressBar1.Visible = false;
             if(String.IsNullOrEmpty(path))
                 labelOutputFolder.Text= Environment.CurrentDirectory;
             else
@@ -210,7 +225,16 @@ namespace YoutubeVideoDownloader
                     else
                         try
                         {
-                            await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(currentPath, cleanedName + ".mp4"));
+                            var progress = new Progress<double>(p =>
+                            {
+                                progressBar1.Value = Convert.ToInt32(p * 100);
+                                label2.Text = $"Downloading {video.Title}, {count} of {videos.Count} " + Convert.ToString(Math.Round(p, 2) * 100) + "%";
+                                 if (p == 1)
+                                {
+                                    label2.Text = Path.Combine(currentPath, cleanedName + ".mp4") + " has been saved successfully";
+                                }
+                            });
+                            await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(currentPath, cleanedName + ".mp4"),progress);
                         }
                         catch(Exception ex)
                         {
@@ -227,6 +251,7 @@ namespace YoutubeVideoDownloader
             }
             else
             {
+                
                 label2.Text = "Downloading single file...";
                 var video = await youtube.Videos.GetAsync(url);
                 //var video = await youtube.Videos.GetAsync("https://www.youtube.com/watch?v=tVUYyVfydqY");               
@@ -237,13 +262,23 @@ namespace YoutubeVideoDownloader
                 var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestBitrate();
                 var videoStream = await youtube.Videos.Streams.GetAsync(streamInfo);
 
+
                 if (File.Exists(filePath) && new FileInfo(filePath).Length > 0)
                 {
                     label2.Text = fileName + " already exists";
                 }
                 else
                 {
-                    await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath); 
+                    var progress = new Progress<double>(p =>
+                    {
+                        progressBar1.Value = Convert.ToInt32(p * 100);
+                        label2.Text = "Downloading single file..." + Convert.ToString(Math.Round(p, 2) * 100) + "%";
+                    if (p == 1)
+                        {
+                            label2.Text = fileName + " has been saved successfully";
+                        }
+                    });
+                    await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath,progress); 
                     label2.Text = fileName + " has been saved successfully";
                 }
             }

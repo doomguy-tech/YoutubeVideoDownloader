@@ -38,6 +38,7 @@
             this.buttonChangeFolder = new System.Windows.Forms.Button();
             this.labelOutputFolder = new System.Windows.Forms.Label();
             this.buttonOpenFolder = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // buttonDownload
@@ -126,11 +127,19 @@
             this.buttonOpenFolder.UseVisualStyleBackColor = true;
             this.buttonOpenFolder.Click += new System.EventHandler(this.buttonOpenFolder_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(211, 409);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(494, 23);
+            this.progressBar1.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.buttonOpenFolder);
             this.Controls.Add(this.labelOutputFolder);
             this.Controls.Add(this.buttonChangeFolder);
@@ -161,6 +170,7 @@
         private System.Windows.Forms.Button buttonChangeFolder;
         private System.Windows.Forms.Label labelOutputFolder;
         private System.Windows.Forms.Button buttonOpenFolder;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
